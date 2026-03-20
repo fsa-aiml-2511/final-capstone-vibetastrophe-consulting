@@ -226,3 +226,54 @@ Before your final push, verify:
 - [ ] Web app runs locally with `streamlit run webapp/app.py`
 - [ ] README updated with your project-specific details
 - [ ] `.gitignore` excludes large data and model files
+
+
+
+## Installing `UV`
+
+Install `uv` on the Mac:
+
+```sh
+$ curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+On Windows PowerShell:
+
+```powershell
+$ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+## Installing dependencies
+
+Use `uv` to install Python 3.11 and install a vistual enviroment.
+
+```sh
+$ uv venv --python 3.11 .venv
+$ uv pip install -r requirements.txt
+```
+
+Start the virtual enviroment on the Mac:
+
+```sh
+$ source .venv/bin/activate
+```
+
+on Windows PowerShell:
+
+```sh
+$ .venv\Scripts\Activate.ps1
+```
+
+## Deactivate
+
+To deactivate on a Mac, use the following command:
+
+```sh
+deactivate
+```
+
+On Windows:
+
+```sh
+venv/Scripts/activate.ps1 
+```
