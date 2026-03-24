@@ -269,11 +269,11 @@ $ .venv\Scripts\Activate.ps1
 To deactivate on a Mac, use the following command:
 
 ```sh
-deactivate
+$ deactivate
 ```
 
 On Windows:
 
 ```sh
-venv/Scripts/activate.ps1 
+$ .venv/Scripts/deactivate.ps1 
 ```
