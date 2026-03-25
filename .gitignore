@@ -183,3 +183,6 @@ data/processed/images/
 test_data/*.csv
 test_data/*.json
 test_data/images/
+
+# Raw data files (not to be included in version control)
+data/raw/smart_city_csvs/*.csv
