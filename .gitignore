@@ -186,3 +186,6 @@ test_data/images/
 
 # Raw data files (not to be included in version control)
 data/raw/smart_city_csvs/*.csv
+
+.DS_Store
+**/.DS_Store
