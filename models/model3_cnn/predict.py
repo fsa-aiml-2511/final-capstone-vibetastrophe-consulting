@@ -23,9 +23,9 @@ def load_model():
         import tensorflow as tf
         model = tf.keras.models.load_model(MODEL_PATH / "model.keras")
     """
-    # TODO: Load your saved model
-    raise NotImplementedError("Load your trained model here")
-
+    import tensorflow as tf
+    model = tf.keras.models.load_model(MODEL_PATH / "model.keras")
+    return model
 
 def load_and_preprocess_images(image_dir):
     """Load images from the test_data/ image folder and apply transforms.
@@ -42,8 +42,16 @@ def load_and_preprocess_images(image_dir):
             ids.append(img_path.name)
         return np.array(images), ids
     """
-    # TODO: Load and preprocess images
-    raise NotImplementedError("Load and preprocess images here")
+    from tensorflow.keras.preprocessing.image import load_img, img_to_array
+    import numpy as np
+
+    images, ids = [], []
+    for img_path in sorted(Path(image_dir).glob("*.png")):
+        img = load_img(img_path, target_size=(224, 224))
+        img_array = img_to_array(img) / 255.0
+        images.append(img_array)
+        ids.append(img_path.name)
+    return np.array(images), ids
 
 
 def predict(model, images):
@@ -61,7 +69,7 @@ def main():
 
     # Load test images from test_data/ image folder
     # TODO: Update this path to match your test image folder
-    # images, image_ids = load_and_preprocess_images(TEST_DATA_DIR / "images")
+    images, image_ids = load_and_preprocess_images(TEST_DATA_DIR / "images")
 
     # Generate predictions
     # predictions = predict(model, images)
@@ -69,12 +77,12 @@ def main():
     # Save results — MUST match output template exactly
     # results = pd.DataFrame({
     #     "image_id": image_ids,
-    #     "predicted_class": predicted_classes,
-    #     "confidence": confidence_scores,
+    #     "predicted_class": predictions["predicted_class"],
+    #     "confidence": predictions["confidence"],
     # })
     # results.to_csv(OUTPUT_FILE, index=False)
 
-    print(f"Predictions saved to {OUTPUT_FILE}")
+    # print(f"Predictions saved to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
