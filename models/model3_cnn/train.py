@@ -15,7 +15,9 @@ import os
 from pathlib import Path
 import tensorflow as tf
 
-RAW_IMAGES = Path("data/raw")
+RAW_IMAGES = Path("/Volumes/Spare31/pothole_images").expanduser().resolve()
+
+# RAW_IMAGES = Path("../../../../Spare31/pothole_images/")
 SAVED_MODEL_DIR = Path("models/model3_cnn/saved_model/")
 
 
@@ -54,7 +56,7 @@ def load_images(image_dir, target_size=(224, 224), batch_size=32, validation_spl
     )
 
     train_gen = train_datagen.flow_from_directory(
-        image_dir,
+        str(image_dir),
         target_size=target_size,
         batch_size=batch_size,
         class_mode="binary",
@@ -296,7 +298,7 @@ def save_model(model):
 
 def main():
     # 1. Load and preprocess images
-    train_data, val_data = load_images(RAW_IMAGES / "images")
+    train_data, val_data = load_images(RAW_IMAGES ) # / "images"
 
     # 2. Build model
     model = build_model()
