@@ -189,3 +189,7 @@ data/raw/smart_city_csvs/*.csv
 
 .DS_Store
 **/.DS_Store
+
+# Not including the CNN model for right now since it's large and we can always retrain it if needed. Will add to gitignore for now, but may want to remove this in the future if we want to share the trained model.
+models/model3_cnn/saved_model/model.keras
+models/model3_cnn/saved_model/*
