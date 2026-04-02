@@ -37,6 +37,7 @@ def load_images(image_dir, target_size=(224, 224), batch_size=32, validation_spl
         height_shift_range=0.2,
         shear_range=0.2,
         zoom_range=0.2,
+        brightness_range=[0.8, 1.2],
         horizontal_flip=True
     )
 
@@ -105,16 +106,20 @@ def build_model():
             print(e)
 
 
+    base_model = tf.keras.applications.EfficientNetV2S(
+        input_shape=(224, 224, 3),
+        include_top=False,
+        weights='imagenet' 
+    )
+
+    # Freeze the base to protect pre-trained patterns
+    base_model.trainable = False
+
     model = tf.keras.Sequential([
-        tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)),
-        tf.keras.layers.MaxPooling2D((2, 2)),
-        tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
-        tf.keras.layers.MaxPooling2D((2, 2)),
-        tf.keras.layers.Conv2D(32, (2, 2), activation='relu'),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(128, activation='relu'),
+        base_model,
+        tf.keras.layers.GlobalAveragePooling2D(),
         tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(1, activation='sigmoid'),
+        tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
     model.compile(
@@ -232,7 +237,7 @@ def save_model(model):
         model.save(SAVED_MODEL_DIR / "model.keras")
     """
     SAVED_MODEL_DIR.mkdir(parents=True, exist_ok=True)
-    model.save(SAVED_MODEL_DIR / "model.keras")
+    model.save(SAVED_MODEL_DIR / "efficientnet_model.keras")
 
 def main():
     print("Loading and preprocessing images...")
@@ -245,7 +250,7 @@ def main():
 
     evaluate_model(trained_model, val_data)
 
-    # save_model(trained_model)
+    save_model(trained_model)
 
 
 if __name__ == "__main__":
