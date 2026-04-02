@@ -165,8 +165,8 @@ No manual steps. No "you need to run this notebook first." No "change this path.
 
 | Role | Name | GitHub Username |
 |------|------|-----------------|
-| Data Engineering Lead | | |
-| ML / DNN Lead | | |
+| Data Engineering Lead | Kalpana | |
+| ML / DNN Lead | Kyle | |
 | CNN Lead | | |
 | NLP Lead | | |
 
