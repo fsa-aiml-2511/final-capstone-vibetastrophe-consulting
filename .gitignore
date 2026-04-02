@@ -177,6 +177,7 @@ pyrightconfig.json
 
 # Image datasets
 data/raw/images/
+data/raw/pothole_images/
 data/processed/images/
 
 # Test data (provided by instructor)
