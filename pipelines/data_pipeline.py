@@ -7,7 +7,7 @@ Put your common data cleaning, feature engineering, and splitting logic here.
 Usage from any model:
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from pipelines.data_pipeline import load_raw_data, preprocess, split_data
+    from pipelines.data_pipeline import load_raw_data, clean_data, engineer_features, split_data
 """
 import pandas as pd
 from pathlib import Path
@@ -23,13 +23,14 @@ def load_raw_data(filename):
     """Load a raw CSV file from data/raw/.
 
     Args:
-        filename: Name of the CSV file (e.g., "patient_encounters_2023.csv")
+        filename: Name of the CSV file (e.g., "city_traffic_accidents.csv")
 
     Returns:
         pandas DataFrame
 
     Example:
-        df = load_raw_data("patient_encounters_2023.csv")
+        df = load_raw_data("city_traffic_accidents.csv")
+        df = load_raw_data("urbanpulse_311_complaints.csv")
     """
     filepath = RAW_DATA_DIR / filename
     if not filepath.exists():
@@ -37,8 +38,7 @@ def load_raw_data(filename):
             f"Data file not found: {filepath}\n"
             f"Make sure you've downloaded the data to data/raw/"
         )
-    # TODO: Load and return the CSV
-    raise NotImplementedError
+    return pd.read_csv(filepath)
 
 
 def clean_data(df):
@@ -53,8 +53,20 @@ def clean_data(df):
     Returns:
         Cleaned DataFrame
     """
-    # TODO: Add your cleaning logic
-    raise NotImplementedError
+    # Encode common missing-value sentinels as NaN
+    df = df.replace({'?': pd.NA, 'N/A': pd.NA, 'NA': pd.NA, '': pd.NA})
+
+    # Remove exact duplicate rows
+    df = df.drop_duplicates()
+
+    # Drop columns where every value is null
+    df = df.dropna(axis=1, how='all')
+
+    # Strip leading/trailing whitespace from string columns
+    str_cols = df.select_dtypes(include='object').columns
+    df[str_cols] = df[str_cols].apply(lambda col: col.str.strip())
+
+    return df
 
 
 def engineer_features(df):
@@ -69,8 +81,23 @@ def engineer_features(df):
     Returns:
         DataFrame with new feature columns
     """
-    # TODO: Add your feature engineering
-    raise NotImplementedError
+    # Parse any object columns that look like datetimes
+    for col in df.select_dtypes(include='object').columns:
+        if any(kw in col.lower() for kw in ('time', 'date', 'dt')):
+            try:
+                df[col] = pd.to_datetime(df[col])
+            except (ValueError, TypeError):
+                pass
+
+    # Extract temporal features from all datetime columns
+    for col in df.select_dtypes(include='datetime').columns:
+        prefix = col.lower().replace(' ', '_')
+        df[f'{prefix}_hour'] = df[col].dt.hour
+        df[f'{prefix}_day_of_week'] = df[col].dt.dayofweek
+        df[f'{prefix}_month'] = df[col].dt.month
+        df[f'{prefix}_is_weekend'] = (df[col].dt.dayofweek >= 5).astype(int)
+
+    return df
 
 
 def split_data(X, y, test_size=0.2, random_state=42):
