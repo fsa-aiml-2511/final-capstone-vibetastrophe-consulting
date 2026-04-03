@@ -33,19 +33,19 @@ _Anything slowing you down? Data issues, team coordination, unclear requirements
 
 | Model | Status | Owner | Notes |
 |-------|--------|-------|-------|
-| Model 1 (Traditional ML) | Not Started / In Progress / Complete | | |
-| Model 2 (Deep Learning) | Not Started / In Progress / Complete | | |
-| Model 3 (CNN) | Not Started / In Progress / Complete | | |
-| Model 4 (NLP) | Not Started / In Progress / Complete | | |
-| Model 5 (Innovation) | Not Started / In Progress / Complete | | |
-| Web App | Not Started / In Progress / Complete | | |
+| Model 1 (Traditional ML) | Not Started  | | |
+| Model 2 (Deep Learning) | Not Started  | | |
+| Model 3 (CNN) | In Progress  | | |
+| Model 4 (NLP) | In Progress  | | |
+| Model 5 (Innovation) | Not Started  | | |
+| Web App | Not Started  | | |
 
 ## Quick Health Check
 
-- [ ] All team members contributed this week
-- [ ] Code is pushed to the shared repo
-- [ ] No hardcoded file paths in our code
-- [ ] We've read the preprocessing hints file
+- [*] All team members contributed this week
+- [*] Code is pushed to the shared repo
+- [*] No hardcoded file paths in our code
+- [*] We've read the preprocessing hints file
 
 ---
 
