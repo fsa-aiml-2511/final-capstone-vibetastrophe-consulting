@@ -33,3 +33,6 @@ tqdm>=4.65.0
 python-dotenv>=1.0.0
 
 ipykernel>=7.2.0
+
+plotly>=6.6.0
+nbformat>=4.2.0
