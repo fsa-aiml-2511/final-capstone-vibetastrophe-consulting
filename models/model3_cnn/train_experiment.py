@@ -159,6 +159,8 @@ def train_model(model, train_data, val_data, class_weight):
         )
     ]
 
+    model.summary()
+    
     # Stage 1: train head only
     model.fit(
         train_data,
