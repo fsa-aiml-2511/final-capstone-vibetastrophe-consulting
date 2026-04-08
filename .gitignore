@@ -191,4 +191,3 @@ data/raw/smart_city_csvs/*.csv
 **/.DS_Store
 
 models/model3_cnn/saved_model/model.keras
-models/model3_cnn/saved_model/*
