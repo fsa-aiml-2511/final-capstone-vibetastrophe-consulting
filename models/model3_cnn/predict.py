@@ -23,9 +23,9 @@ def load_model():
         import tensorflow as tf
         model = tf.keras.models.load_model(MODEL_PATH / "model.keras")
     """
-    # TODO: Load your saved model
-    raise NotImplementedError("Load your trained model here")
-
+    import tensorflow as tf
+    model = tf.keras.models.load_model(MODEL_PATH / "efficientnet_model.keras")
+    return model
 
 def load_and_preprocess_images(image_dir):
     """Load images from the test_data/ image folder and apply transforms.
@@ -42,17 +42,34 @@ def load_and_preprocess_images(image_dir):
             ids.append(img_path.name)
         return np.array(images), ids
     """
-    # TODO: Load and preprocess images
-    raise NotImplementedError("Load and preprocess images here")
+    from tensorflow.keras.preprocessing.image import load_img, img_to_array
+    import numpy as np
+
+    images, ids = [], []
+    for img_path in sorted(Path(image_dir).glob("*.JPG")):
+        img = load_img(img_path, target_size=(224, 224))
+        img_array = img_to_array(img) / 255.0
+        images.append(img_array)
+        ids.append(img_path.name)
+    return np.array(images), ids
 
 
-def predict(model, images):
+def predict(model, images, image_ids):
     """Generate predictions on image data.
 
     Should return a DataFrame with columns: image_id, predicted_class, confidence
     """
     # TODO: Run your model on the images
-    raise NotImplementedError("Generate predictions here")
+    y_prob = model.predict(images, verbose=0).ravel()
+    y_pred = (y_prob >= 0.5).astype(int)
+
+
+
+    return pd.DataFrame({
+        "image_id": image_ids,  # Fill with image IDs
+        "predicted_class": y_pred,  # Fill with predicted classes (0 or 1)
+        "confidence": y_prob,  # Fill with confidence scores (0.0 to 1.0)
+    })
 
 
 def main():
@@ -60,19 +77,18 @@ def main():
     model = load_model()
 
     # Load test images from test_data/ image folder
-    # TODO: Update this path to match your test image folder
-    # images, image_ids = load_and_preprocess_images(TEST_DATA_DIR / "images")
+    images, image_ids = load_and_preprocess_images(TEST_DATA_DIR / "images/positive")
 
     # Generate predictions
-    # predictions = predict(model, images)
+    predictions = predict(model, images, image_ids)
 
     # Save results — MUST match output template exactly
-    # results = pd.DataFrame({
-    #     "image_id": image_ids,
-    #     "predicted_class": predicted_classes,
-    #     "confidence": confidence_scores,
-    # })
-    # results.to_csv(OUTPUT_FILE, index=False)
+    results = pd.DataFrame({
+        "image_id": image_ids,
+        "predicted_class": predictions["predicted_class"],
+        "confidence": predictions["confidence"],
+    })
+    results.to_csv(OUTPUT_FILE, index=False)
 
     print(f"Predictions saved to {OUTPUT_FILE}")
 
