@@ -177,6 +177,7 @@ pyrightconfig.json
 
 # Image datasets
 data/raw/images/
+data/raw/pothole_images/
 data/processed/images/
 
 # Test data (provided by instructor)
@@ -186,6 +187,7 @@ test_data/images/
 
 # Raw data files (not to be included in version control)
 data/raw/smart_city_csvs/*.csv
+data/raw/*.csv
 
 .DS_Store
 **/.DS_Store
