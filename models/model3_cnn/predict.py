@@ -14,7 +14,7 @@ from pathlib import Path
 MODEL_PATH = Path("models/model3_cnn/saved_model/")
 TEST_DATA_DIR = Path("test_data/")
 OUTPUT_FILE = TEST_DATA_DIR / "model3_results.csv"
-
+PREDICTION_THRESHOLD = 0.5
 
 def load_model():
     """Load your trained CNN model from saved_model/.
@@ -42,13 +42,14 @@ def load_and_preprocess_images(image_dir):
             ids.append(img_path.name)
         return np.array(images), ids
     """
+    print(f"Loading and preprocessing images from {image_dir}...")
     from tensorflow.keras.preprocessing.image import load_img, img_to_array
     import numpy as np
 
     images, ids = [], []
     for img_path in sorted(Path(image_dir).glob("*.JPG")):
         img = load_img(img_path, target_size=(224, 224))
-        img_array = img_to_array(img) / 255.0
+        img_array = img_to_array(img)
         images.append(img_array)
         ids.append(img_path.name)
     return np.array(images), ids
@@ -61,7 +62,7 @@ def predict(model, images, image_ids):
     """
     # TODO: Run your model on the images
     y_prob = model.predict(images, verbose=0).ravel()
-    y_pred = (y_prob >= 0.5).astype(int)
+    y_pred = (y_prob >= PREDICTION_THRESHOLD).astype(int)
 
 
 
