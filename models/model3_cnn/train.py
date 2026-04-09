@@ -14,8 +14,9 @@ from gc import callbacks
 import os
 from pathlib import Path
 import tensorflow as tf
+import numpy as np
 
-RAW_IMAGES = Path("/Volumes/Spare31/pothole_images").expanduser().resolve()
+RAW_IMAGES = Path("data/raw/images").resolve()
 
 # RAW_IMAGES = Path("../../../../Spare31/pothole_images/")
 SAVED_MODEL_DIR = Path("models/model3_cnn/saved_model/")
@@ -33,11 +34,14 @@ def load_images(image_dir, target_size=(224, 224), batch_size=32, validation_spl
     )
     val_datagen = tf.keras.preprocessing.image.ImageDataGenerator(validation_split=validation_split)
 
+    CLASS_NAMES = ["negative", "positive"]  # Update with your actual class names based on directory structure
+
     train_gen = train_datagen.flow_from_directory(
         image_dir,
         target_size=target_size,
         batch_size=batch_size,
         class_mode="binary",
+        classes=CLASS_NAMES,
         subset="training",
         shuffle=True,
         seed=RANDOM_SEED,
@@ -47,6 +51,7 @@ def load_images(image_dir, target_size=(224, 224), batch_size=32, validation_spl
         target_size=target_size,
         batch_size=batch_size,
         class_mode="binary",
+        classes=CLASS_NAMES,
         subset="validation",
         shuffle=False,
         seed=RANDOM_SEED,

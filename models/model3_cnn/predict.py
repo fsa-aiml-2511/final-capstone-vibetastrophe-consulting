@@ -77,7 +77,7 @@ def main():
     model = load_model()
 
     # Load test images from test_data/ image folder
-    images, image_ids = load_and_preprocess_images(TEST_DATA_DIR / "images/positive")
+    images, image_ids = load_and_preprocess_images(TEST_DATA_DIR / "images")
 
     # Generate predictions
     predictions = predict(model, images, image_ids)

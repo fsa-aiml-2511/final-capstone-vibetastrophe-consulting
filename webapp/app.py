@@ -99,35 +99,36 @@ elif model_choice == "Model 3: CNN (Image Classification)":
     st.header("Model 3: CNN — Image Classification")
 
     # ---- INTEGRATION PATTERN (uncomment and adapt) ----
-    # @st.cache_resource
-    # def load_model3():
-    #     import tensorflow as tf
-    #     return tf.keras.models.load_model("models/model3_cnn/saved_model/model.keras")
-    #
-    # model = load_model3()
-    #
-    # uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-    # if uploaded_file is not None:
-    #     from PIL import Image
-    #     import numpy as np
-    #
-    #     image = Image.open(uploaded_file)
-    #     st.image(image, caption="Uploaded Image", use_container_width=True)
-    #
-    #     # Preprocess — must match your training preprocessing
-    #     img_resized = image.resize((224, 224))
-    #     img_array = np.array(img_resized) / 255.0
-    #     img_batch = np.expand_dims(img_array, axis=0)
-    #
-    #     if st.button("Classify"):
-    #         prediction = model.predict(img_batch)
-    #         confidence = float(prediction.max())
-    #         predicted_class = "Positive" if prediction[0][0] > 0.5 else "Negative"
-    #         st.success(f"Prediction: {predicted_class}")
-    #         st.write(f"Confidence: {confidence:.2%}")
+    @st.cache_resource
+    def load_model3():
+        import tensorflow as tf
+        return tf.keras.models.load_model("models/model3_cnn/saved_model/efficientnet_model.keras")
+    
+    model = load_model3()
+    
+    uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
+    if uploaded_file is not None:
+        from PIL import Image
+        import numpy as np
+    
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
+    
+        # Preprocess — must match your training preprocessing
+        img_resized = image.resize((224, 224))
+        img_array = np.array(img_resized) / 255.0
+        img_batch = np.expand_dims(img_array, axis=0)
+    
+        if st.button("Classify"):
+            prediction = model.predict(img_batch)
+            print(prediction)
+            confidence = float(prediction.max())
+            predicted_class = "Positive" if prediction[0][0] > 0.5 else "Negative"
+            st.success(f"Prediction: {predicted_class}")
+            st.write(f"Confidence: {confidence:.2%}")
     # ---- END PATTERN ----
 
-    st.info("Not yet implemented — add image upload and classification here.")
+    # st.info("Not yet implemented — add image upload and classification here.")
 
 elif model_choice == "Model 4: NLP (Text Classification)":
     st.header("Model 4: NLP — Text Classification")
