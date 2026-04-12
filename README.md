@@ -165,7 +165,7 @@ No manual steps. No "you need to run this notebook first." No "change this path.
 
 | Role | Name | GitHub Username |
 |------|------|-----------------|
-| Data Engineering Lead | Kalpana & Joseph | jvilla13, kalpanaselvaa
+| Data Engineering Lead | Kalpana & Joseph | jvilla13 kalpanaselvaa
  |
 | ML / DNN Lead | Kyle | groverpe60-Eagle |
 | CNN Lead | David | davidfekke |
