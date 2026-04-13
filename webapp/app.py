@@ -9,6 +9,14 @@ Deploy:       Push to GitHub, then connect to Streamlit Community Cloud
 """
 import streamlit as st
 from pathlib import Path
+import sys
+from PIL import Image
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from models.model3_cnn.inference import THRESHOLD, predict_single_image
 
 # Page config
 st.set_page_config(
@@ -99,32 +107,27 @@ elif model_choice == "Model 3: CNN (Image Classification)":
     st.header("Model 3: CNN — Image Classification")
 
     # ---- INTEGRATION PATTERN (uncomment and adapt) ----
-    # @st.cache_resource
-    # def load_model3():
-    #     import tensorflow as tf
-    #     return tf.keras.models.load_model("models/model3_cnn/saved_model/model.keras")
-    #
-    # model = load_model3()
-    #
-    # uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-    # if uploaded_file is not None:
-    #     from PIL import Image
-    #     import numpy as np
-    #
-    #     image = Image.open(uploaded_file)
-    #     st.image(image, caption="Uploaded Image", use_container_width=True)
-    #
-    #     # Preprocess — must match your training preprocessing
-    #     img_resized = image.resize((224, 224))
-    #     img_array = np.array(img_resized) / 255.0
-    #     img_batch = np.expand_dims(img_array, axis=0)
-    #
-    #     if st.button("Classify"):
-    #         prediction = model.predict(img_batch)
-    #         confidence = float(prediction.max())
-    #         predicted_class = "Positive" if prediction[0][0] > 0.5 else "Negative"
-    #         st.success(f"Prediction: {predicted_class}")
-    #         st.write(f"Confidence: {confidence:.2%}")
+    @st.cache_resource
+    def load_model3():
+        import tensorflow as tf
+        return tf.keras.models.load_model("models/model3_cnn/saved_model/efficientnet_model.keras")
+    
+    model = load_model3()
+    
+    uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
+    if uploaded_file is not None:
+        uploaded_file.seek(0)
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
+    
+        if st.button("Classify"):
+            result = predict_single_image(model, uploaded_file, threshold=THRESHOLD)
+            if result["confidence"] >= THRESHOLD:
+                st.success(f"Prediction: {result['label']}")
+            else:
+                st.warning(f"Prediction: {result['label']}")
+            st.write(f"Confidence: {result['confidence']:.2%}")
+            st.caption(f"Decision threshold: {result['threshold']:.2f}")
     # ---- END PATTERN ----
 
     st.info("Not yet implemented — add image upload and classification here.")
