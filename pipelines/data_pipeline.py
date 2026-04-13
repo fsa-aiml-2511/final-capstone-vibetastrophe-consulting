@@ -87,7 +87,7 @@ def engineer_features(df):
             try:
                 df[col] = pd.to_datetime(df[col])
             except (ValueError, TypeError):
-                pass
+                df[col] = df[col]  # If parsing fails, set to NaN
 
     # Extract temporal features from all datetime columns
     for col in df.select_dtypes(include='datetime').columns:
@@ -151,3 +151,10 @@ def load_processed_data(filename):
             f"Run the data pipeline first to generate processed data."
         )
     return pd.read_csv(filepath)
+
+def save_dataframe(df, filename):
+    """Save a DataFrame to the processed data directory."""
+    PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = PROCESSED_DATA_DIR / filename
+    df.to_csv(output_path, index=False)
+    print(f"Saved DataFrame to {output_path}")
