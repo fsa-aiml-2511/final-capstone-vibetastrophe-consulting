@@ -165,11 +165,10 @@ No manual steps. No "you need to run this notebook first." No "change this path.
 
 | Role | Name | GitHub Username |
 |------|------|-----------------|
-| Data Engineering Lead | Kalpana & Joseph | jvilla13 kalpanaselvaa
- |
-| ML / DNN Lead | Kyle | groverpe60-Eagle |
-| CNN Lead | David | davidfekke |
-| NLP Lead | Denzl | denzlchapman |
+| Data Engineering Lead | Kalpana & Joseph | [jvilla13](https://github.com/jvilla13) [kalpanaselvaa](https://github.com/kalpanaselvaa) |
+| ML / DNN Lead | Kyle | [groverpe60-Eagle](https://github.com/groverpe60-Eagle) |
+| CNN Lead | David | [davidfekke](https://github.com/davidfekke) |
+| NLP Lead | Denzl | [denzlchapman](https://github.com/denzlchapman) |
 
 ---
 
