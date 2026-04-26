@@ -230,7 +230,7 @@ def main():
     # 0. Disable GPUs if on a Apple Silicon based Mac
     if is_apple_silicon():
         print("Running on Apple Silicon Mac, disabling the GPU to avoid compatibility issues.")
-        disable_gpus()
+        # disable_gpus()
 
     # 1. Load data
     df = load_data()
