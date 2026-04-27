@@ -69,28 +69,28 @@ elif model_choice == "Model 1: Traditional ML":
     st.header("Model 1: Traditional ML")
 
     # ---- INTEGRATION PATTERN (uncomment and adapt) ----
-    # @st.cache_resource
-    # def load_model1():
-    #     import joblib
-    #     return joblib.load("models/model1_traditional_ml/saved_model/model.joblib")
-    #
-    # model = load_model1()
-    #
-    # # Create input fields for your features
-    # col1, col2 = st.columns(2)
-    # with col1:
-    #     feature_1 = st.number_input("Feature 1", value=0.0)
-    #     feature_2 = st.selectbox("Feature 2", ["Option A", "Option B"])
-    # with col2:
-    #     feature_3 = st.slider("Feature 3", 0, 100, 50)
-    #
-    # if st.button("Predict"):
-    #     import pandas as pd
-    #     input_df = pd.DataFrame([{"feature_1": feature_1, ...}])
-    #     prediction = model.predict(input_df)
-    #     probability = model.predict_proba(input_df)
-    #     st.success(f"Prediction: {prediction[0]}")
-    #     st.write(f"Confidence: {probability.max():.2%}")
+    @st.cache_resource
+    def load_model1():
+        import joblib
+        return joblib.load("models/model1_traditional_ml/saved_model/model.joblib")
+    
+    model = load_model1()
+    
+    # Create input fields for your features
+    col1, col2 = st.columns(2)
+    with col1:
+        feature_1 = st.number_input("Feature 1", value=0.0)
+        feature_2 = st.selectbox("Feature 2", ["Option A", "Option B"])
+    with col2:
+        feature_3 = st.slider("Feature 3", 0, 100, 50)
+    
+    if st.button("Predict"):
+        import pandas as pd
+        input_df = pd.DataFrame([{"feature_1": feature_1, "feature_2": feature_2, "feature_3": feature_3}])
+        prediction = model.predict(input_df)
+        probability = model.predict_proba(input_df)
+        st.success(f"Prediction: {prediction[0]}")
+        st.write(f"Confidence: {probability.max():.2%}")
     # ---- END PATTERN ----
 
     st.info("Not yet implemented — load your model and add input fields here.")
@@ -99,8 +99,8 @@ elif model_choice == "Model 2: Deep Learning":
     st.header("Model 2: Deep Learning")
     # TODO: Load your DNN model and add prediction interface
     # Same pattern as Model 1, but load with:
-    #     import tensorflow as tf
-    #     model = tf.keras.models.load_model("models/model2_deep_learning/saved_model/model.keras")
+    import tensorflow as tf
+    model = tf.keras.models.load_model("models/model2_deep_learning/saved_model/model.keras")
     st.info("Not yet implemented — load your model and add input fields here.")
 
 elif model_choice == "Model 3: CNN (Image Classification)":
