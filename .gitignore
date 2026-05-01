@@ -195,3 +195,4 @@ data/processed/*.csv
 **/.DS_Store
 
 models/model3_cnn/saved_model/model.keras
+models/model4_nlp_classification/saved_model/model.safetensors
