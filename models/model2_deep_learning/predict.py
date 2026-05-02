@@ -52,7 +52,21 @@ def predict(model, test_data):
 
     Should return a DataFrame with columns: id, prediction, probability, confidence
     """
-    predictions = model.predict(test_data)
+
+    features = [
+        'Distance(mi)', 'Timezone', 
+         'Temperature(F)', 'Wind_Chill(F)', 'Humidity(%)', 'Pressure(in)', 
+        'Visibility(mi)', 'Wind_Speed(mph)', 'Precipitation(in)', 
+        'wind_dir_deg', 'weather_cond_num', 'accident_dir',
+        'hour','day_of_week','month','is_weekend',
+        'is_morning_rush','is_evening_rush','is_rush_hour',
+        'duration_min','wind_dir_deg','weather_cond_num','weather_data_available',
+        'is_freezing','low_visibility','accident_dir','lat_bin',
+        'n_road_features','has_traffic_control'
+    ]
+    X = test_data[features].copy()
+    
+    predictions = model.predict(X)
     return predictions
 
 def main():
@@ -65,21 +79,25 @@ def main():
 
     # Load test data
     # TODO: Update this path to match your test data file
-    test_df = pd.read_csv(TEST_DATA_DIR / "test_city_traffic_accidents.csv")
-
+    test_df = pd.read_csv(TEST_DATA_DIR / "City_traffic_Test.csv")
+    
     # Generate predictions
     predictions = predict(model, test_df)
 
     # Save results — MUST match output template exactly
-    # results = pd.DataFrame({
-    #     "id": test_df["id"],
-    #     "prediction": predictions,
-    #     "probability": raw_probabilities,
-    #     "confidence": confidence_scores,
-    # })
-    # results.to_csv(OUTPUT_FILE, index=False)
+    # The predictions are in a two dimensional array. I need to extract the results so they will fit in a column in the dataframe.
+    results = pd.DataFrame({
+        "id": test_df["ID"],
+        "prediction": predictions.argmax(axis=1),  # Assuming a classification model with one-hot encoded outputs
+        "probability": predictions.max(axis=1),  # The probability of the predicted class
+        "confidence": predictions.max(axis=1) / predictions.sum(axis=1)  #
+    })
+    results.to_csv(OUTPUT_FILE, index=False)
 
-    # print(f"Predictions saved to {OUTPUT_FILE}")
+    # "probability": raw_probabilities,
+    # "confidence": confidence_scores,
+
+    print(f"Predictions saved to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":

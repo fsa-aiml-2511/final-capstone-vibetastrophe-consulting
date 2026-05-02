@@ -42,7 +42,7 @@ def load_raw_data(filename):
     return pd.read_csv(filepath)
 
 
-def clean_data(df):
+def clean_data(df, keep_id=False):
     """Apply common data cleaning steps.
 
     Things to handle:
@@ -79,7 +79,7 @@ def clean_data(df):
 
     # Drop the following columns: Street,City,County,State,Zipcode,Country
     for col in ['ID', 'Source', 'Description', 'Street', 'City', 'County', 'State', 'Zipcode', 'Country', 'Airport_Code', 'Weather_Timestamp']:
-        if col in df.columns:
+        if col in df.columns and not (keep_id and col == 'ID'):
             df = df.drop(columns=[col])
 
     # If precipitation value is empty or blank, fill with 0.0
