@@ -131,6 +131,20 @@ def clean_data(df, keep_id=False):
 
     return df
 
+def urban_data_clean(df):
+    """Apply data cleaning steps specific to the urban pulse dataset."""
+    # Example: If there are columns specific to the urban pulse dataset that need special handling, do it here.
+    # For instance, if there's a column called 'Complaint_Type' that has categorical values, you might want to encode it or extract features from it.
+
+    # If there's a datetime column called 'Created_Date', parse it and extract features
+    if 'Created_Date' in df.columns:
+        df['Created_Date'] = pd.to_datetime(df['Created_Date'], errors='coerce')
+        df['created_hour'] = df['Created_Date'].dt.hour
+        df['created_day_of_week'] = df['Created_Date'].dt.dayofweek
+        df['created_month'] = df['Created_Date'].dt.month
+
+    return df
+
 
 def engineer_features(df):
     """Create new features from existing columns.
@@ -351,6 +365,12 @@ def engineer_features(df):
     df['has_traffic_control'] = df[existing_control].any(axis=1).astype(int)
 
     df = df.drop(columns=['Start_Time', 'End_Time', 'Start_Lat', 'Start_Lng', 'End_Lat', 'End_Lng'])
+
+    return df
+
+def engineer_urban_features(df):
+    """Create new features specific to the urban pulse dataset."""
+    # Example: If there's a column called 'Complaint_Type', you might want to create binary flags for the most common complaint types or extract keywords from it.
 
     return df
 
