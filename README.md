@@ -27,7 +27,8 @@
 │   ├── model4_nlp_classification/ # NLP text classification
 │   │   ├── train.py
 │   │   ├── predict.py
-│   │   └── saved_model/
+│   │   └── saved_model/           # The saved model is too large to store in this repo. Please find the model in the following location.
+https://github.com/davidfekke/model4_nlp_classification/blob/main/saved_model/final_model/model.safetensors
 │   │
 │   └── model5_innovation/         # Your team's innovation model
 │       ├── train.py
@@ -70,6 +71,7 @@
 | `webapp/` | Your deployed Streamlit web app that integrates all 5 models. Run with `streamlit run webapp/app.py`. Deploy to [Streamlit Community Cloud](https://streamlit.io/cloud) for free. | Everyone (shared responsibility) |
 | `test_data/` | **Do not touch.** The instructor will place test data here during evaluation. Your `predict.py` scripts read from this folder. | Instructor only |
 | `output_templates/` | Example CSVs showing the **exact** output format each model must produce. Open these and match them precisely. | Reference — do not modify |
+| nlp_model/ | The nlp model can be found in the following location | [nlp model](https://github.com/davidfekke/model4_nlp_classification/blob/main/saved_model/final_model/model.safetensors) |
 
 ---
 
