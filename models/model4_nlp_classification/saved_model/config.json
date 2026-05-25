@@ -3,29 +3,29 @@
   "architectures": [
     "DistilBertForSequenceClassification"
   ],
-  "attention_dropout": 0.1,
+  "attention_dropout": 0.3,
   "bos_token_id": null,
   "dim": 768,
-  "dropout": 0.1,
+  "dropout": 0.3,
   "dtype": "float32",
   "eos_token_id": null,
   "hidden_dim": 3072,
   "id2label": {
-    "0": "LABEL_0",
-    "1": "LABEL_1",
-    "2": "LABEL_2",
-    "3": "LABEL_3",
-    "4": "LABEL_4",
-    "5": "LABEL_5"
+    "0": "Blocked Driveway",
+    "1": "HEAT/HOT WATER",
+    "2": "Illegal Parking",
+    "3": "Noise - Residential",
+    "4": "Other",
+    "5": "Snow or Ice"
   },
   "initializer_range": 0.02,
   "label2id": {
-    "LABEL_0": 0,
-    "LABEL_1": 1,
-    "LABEL_2": 2,
-    "LABEL_3": 3,
-    "LABEL_4": 4,
-    "LABEL_5": 5
+    "Blocked Driveway": 0,
+    "HEAT/HOT WATER": 1,
+    "Illegal Parking": 2,
+    "Noise - Residential": 3,
+    "Other": 4,
+    "Snow or Ice": 5
   },
   "max_position_embeddings": 512,
   "model_type": "distilbert",
@@ -38,6 +38,7 @@
   "sinusoidal_pos_embds": false,
   "tie_weights_": true,
   "tie_word_embeddings": true,
-  "transformers_version": "5.3.0",
+  "transformers_version": "5.8.1",
+  "use_cache": false,
   "vocab_size": 30522
 }
