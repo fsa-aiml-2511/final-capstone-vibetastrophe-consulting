@@ -154,7 +154,7 @@ st.markdown("""
     <div style='text-align:center; padding: 1rem 0 0.5rem 0;'>
         <h1 style='font-size:2.6rem; margin-bottom:0;'>🏙️ SmartCity FSA</h1>
         <p style='font-size:1.1rem; color:#90CAF9; margin-top:0.3rem;'>
-            AI-Powered Urban Intelligence Platform &nbsp;|&nbsp; www.smartcityfsa.com
+            AI-Powered Urban Intelligence Platform &nbsp;|&nbsp; vibetastrophe.com
         </p>
     </div>
     <hr style='border:1px solid #1E88E5; margin-bottom:1.5rem;'>
@@ -179,7 +179,7 @@ model_choice = st.sidebar.selectbox(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.caption("www.smartcityfsa.com")
+st.sidebar.caption("vibetastrophe.com")
 
 # ---------------------------------------------------------------------------
 # Model pages
@@ -195,7 +195,7 @@ if model_choice == "Home":
         st.info("**Model 2: Deep Learning**\n\nDeep neural network for accident severity prediction using the same feature set.")
     with col2:
         st.info("**Model 3: CNN**\n\nEfficientNetB0 image classifier — detects potholes from road images.")
-        st.info("**Model 4: NLP**\n\nBidirectional GRU with TF-IDF embeddings — classifies 311 complaint descriptions into 6 categories.")
+        st.info("**Model 4: NLP**\n\nDistilBERT transformer — classifies 311 complaint descriptions into 6 categories.")
     with col3:
         st.info("**Model 5: Innovation**\n\nXGBoost road deterioration predictor using NYC 311 data. Rates severity: Low → Critical.")
         st.success("**Live Data**\n\n434,722 NYC 311 complaints processed for batch predictions.")
@@ -441,7 +441,7 @@ elif model_choice == "Model 2: Deep Learning":
     )
 
 elif model_choice == "Model 3: CNN (Image Classification)":
-    from models.model3_cnn.inference import THRESHOLD, predict_single_image
+    from models.model3_cnn.predict import THRESHOLD, predict as predict_model3
     st.header("Model 3: CNN — Pothole Image Classification")
     st.markdown(
         "Upload a road image (or load a sample below) to classify it as "
@@ -497,12 +497,19 @@ elif model_choice == "Model 3: CNN (Image Classification)":
         if st.button("Classify"):
             if hasattr(_image_source, 'seek'):
                 _image_source.seek(0)
-            result = predict_single_image(model, _image_source, threshold=THRESHOLD)
-            if result["predicted_class"] == 1:
-                st.error(f"Pothole detected — {result['confidence']:.2%} confidence")
+
+            # Mirror predict.py preprocessing: RGB + 224x224 + raw pixel array.
+            img = Image.open(_image_source).convert("RGB").resize((224, 224))
+            img_array = np.array(img)
+            predictions = predict_model3(model, np.array([img_array]), [_caption or "uploaded_image"])
+            pred_class = int(predictions.loc[0, "predicted_class"])
+            confidence = float(predictions.loc[0, "confidence"])
+
+            if pred_class == 1:
+                st.success(f"Pothole detected — {confidence:.2%} confidence")
             else:
-                st.success(f"No pothole — {result['confidence']:.2%} confidence")
-            st.caption(f"Decision threshold: {result['threshold']:.2f}")
+                st.error(f"No pothole — {confidence:.2%} confidence")
+            st.caption(f"Decision threshold: {THRESHOLD:.2f}")
 
 elif model_choice == "Model 4: NLP (Text Classification)":
     st.header("Model 4: NLP — 311 Complaint Classification")
@@ -511,35 +518,41 @@ elif model_choice == "Model 4: NLP (Text Classification)":
         "it into one of 6 complaint categories."
     )
 
-    _distilbert_weights = (
-        ROOT_DIR / "models" / "model4_nlp_classification" / "saved_model" / "final_model" / "model.safetensors"
-    )
+    _M4_DIR = ROOT_DIR / "models" / "model4_nlp_classification" / "saved_model"
+    _distilbert_weights = _M4_DIR / "model.safetensors"
+
     if _distilbert_weights.exists():
         st.success("Active model: DistilBERT (fine-tuned transformer)")
     else:
-        st.info(
-            "Active model: Bidirectional GRU + TF-IDF. "
-            "DistilBERT upgrade ready — see `predict_distilbert.py` and README."
-        )
+        st.error("DistilBERT weights not found. Expected: models/model4_nlp_classification/saved_model/model.safetensors")
 
-    _M4_DIR = ROOT_DIR / "models" / "model4_nlp_classification" / "saved_model"
+    def _m4_get_device():
+        import torch
+
+        if torch.backends.mps.is_available():
+            return torch.device("mps")
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        return torch.device("cpu")
 
     @st.cache_resource
-    def load_model4():
-        import tensorflow as tf
-        gru   = tf.keras.models.load_model(str(_M4_DIR / "gru_model.keras"))
-        vec   = joblib.load(_M4_DIR / "vectorizer.joblib")
-        le    = joblib.load(_M4_DIR / "label_encoder.joblib")
-        return gru, vec, le
+    def load_model4_distilbert():
+        import torch
+        from transformers import DistilBertForSequenceClassification, DistilBertTokenizerFast
 
-    _m4_model, _m4_vec, _m4_le = load_model4()
+        device = _m4_get_device()
+        model = DistilBertForSequenceClassification.from_pretrained(_M4_DIR)
+        tokenizer = DistilBertTokenizerFast.from_pretrained(_M4_DIR)
+        model.to(device)
+        model.eval()
 
-    def _m4_preprocess(text: str) -> str:
-        import re
-        text = text.lower()
-        text = re.sub(r'[^\w\s]', '', text)
-        text = re.sub(r'\s+', ' ', text).strip()
-        return text
+        with open(_M4_DIR / "id2label.json", "r") as f:
+            id2label = json.load(f)
+        id2label = {int(k): v for k, v in id2label.items()}
+
+        return model, tokenizer, id2label, device
+
+    _m4_model, _m4_tokenizer, _m4_id2label, _m4_device = load_model4_distilbert()
 
     _M4_SAMPLES = {
         "Blocked Driveway": (
@@ -589,19 +602,34 @@ elif model_choice == "Model 4: NLP (Text Classification)":
     )
 
     if st.button("Classify", key="m4_classify") and user_text.strip():
-        cleaned = _m4_preprocess(user_text)
-        vec_input = _m4_vec([cleaned])
-        probs = _m4_model.predict(vec_input, verbose=0)[0]
+        import torch
+
+        inputs = _m4_tokenizer(
+            [user_text],
+            padding=True,
+            truncation=True,
+            max_length=128,
+            return_tensors="pt",
+        )
+        inputs = {k: v.to(_m4_device) for k, v in inputs.items()}
+
+        with torch.no_grad():
+            outputs = _m4_model(**inputs)
+            probs = torch.softmax(outputs.logits, dim=-1).cpu().numpy()[0]
+
         pred_idx = int(np.argmax(probs))
         confidence = float(probs[pred_idx])
-        label = _m4_le.inverse_transform([pred_idx])[0]
+        label = _m4_id2label[pred_idx]
+
         st.success(f"Predicted Category: **{label}**")
         st.write(f"Confidence: {confidence:.2%}")
         st.markdown("**All class probabilities:**")
+        class_indices = sorted(_m4_id2label.keys())
         prob_df = pd.DataFrame({
-            "Category": _m4_le.classes_,
-            "Probability": [f"{p:.2%}" for p in probs],
+            "Category": [_m4_id2label[i] for i in class_indices],
+            "Probability": [float(probs[i]) for i in class_indices],
         }).sort_values("Probability", ascending=False)
+        prob_df["Probability"] = prob_df["Probability"].map(lambda p: f"{p:.2%}")
         st.dataframe(prob_df, use_container_width=True, hide_index=True)
 
 elif model_choice == "Model 5: Innovation":
